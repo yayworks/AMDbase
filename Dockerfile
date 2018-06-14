@@ -5,7 +5,7 @@ LABEL maintainer="Nimbix, Inc."
 
 # Update SERIAL_NUMBER to force rebuild of all layers (don't use cached layers)
 ARG SERIAL_NUMBER
-ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180612.1337}
+ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180613.2141}
 
 ARG GIT_BRANCH
 ENV GIT_BRANCH ${GIT_BRANCH:-master}
@@ -111,6 +111,25 @@ RUN sudo /usr/local/anaconda3/bin/pip install jupyter_c_kernel && \
 
 RUN mkdir -p /opt/images && \
     mkdir -p /opt/icons
+    
+WORKDIR /usr/local
+RUN sudo wget https://s3.amazonaws.com/gen-purpose/AOCC-1.2-Fortran-Prerequisites.tar.xz && \
+    sudo wget https://s3.amazonaws.com/gen-purpose/AOCC-1.2-FortranPlugin.tar.xz && \
+    sudo wget https://s3.amazonaws.com/gen-purpose/AOCC-1.2-Compiler.tar.xz && \
+    sudo tar xf AOCC-1.2-Compiler.tar.xz && \
+    sudo wget https://s3.amazonaws.com/gen-purpose/AMDuProf_Linux_x64_1.2.275.tar.gz && \
+    sudo tar xvfz AMDuProf_Linux_x64_1.2.275.tar.gz && \
+    sudo wget https://s3.amazonaws.com/gen-purpose/AMD-LIBM-Linux-3.2.1.tar.gz && \
+    sudo tar xvfz AMD-LIBM-Linux-3.2.1.tar.gz && \
+    sudo wget https://s3.amazonaws.com/gen-purpose/AMD-BLIS-Linux-0.95-Beta.tar.gz && \
+    sudo tar xvfz AMD-BLIS-Linux-0.95-Beta.tar.gz && \
+    sudo rm -rf /usr/local/*tar* && \
+    cd AOCC-1.2-Compiler && \
+    sudo ./install.sh && \
+    sudo ln -s /usr/local/AOCC-1.2-Compiler/AOCC-1.2-FortranPlugin/dragonegg.so /usr/lib/dragonegg.so && \
+    sudo ln -s /usr/local/amdlibm-3.2.1/lib/dynamic/libamdlibm.so /usr/lib/libamdlibm.so && \
+    sudo ln -s /usr/local/amd-blis-0.95-beta/lib/libblis.so /usr/lib/libblis.so && \
+    sudo cp -r /usr/local/amd-blis-0.95-beta/include/blis /usr/include 
 
 ADD ./scripts /usr/local/scripts
 
@@ -132,7 +151,9 @@ CMD /usr/local/scripts/update_drivers.sh
 RUN echo 'export PATH=/usr/local/cuda/bin:/usr/local/anaconda3/envs/tensorflow/bin:$PATH' >> /home/nimbix/.bashrc \
 &&  echo 'export PYTHONPATH=/usr/local/anaconda3/envs/tensorflow/lib/python3.6:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/prettytensor-0.7.2-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/enum34-1.1.6-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/matplotlib:$PYTHONPATH' >> /home/nimbix/.bashrc \
 &&  echo 'export PATH=/usr/local/cuda/bin:/usr/local/anaconda3/envs/tensorflow/bin:$PATH' >> /etc/skel/.bashrc \
-&&  echo 'export PYTHONPATH=/usr/local/anaconda3/envs/tensorflow/lib/python3.6:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/prettytensor-0.7.2-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/enum34-1.1.6-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/matplotlib:$PYTHONPATH' >> /etc/skel/.bashrc
+&&  echo 'export PYTHONPATH=/usr/local/anaconda3/envs/tensorflow/lib/python3.6:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/prettytensor-0.7.2-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/enum34-1.1.6-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/matplotlib:$PYTHONPATH' >> /etc/skel/.bashrc \
+&&  echo 'export PATH=$PATH:/usr/local/AMDuProf_Linux_x64_1.2.275/bin' >> /etc/skel/.bashrc \
+&&  echo 'source /usr/local/setenv_AOCC.sh' >> /etc/skel/.bashrc 
    
 
 # Expose port 22 for local JARVICE emulation in docker
