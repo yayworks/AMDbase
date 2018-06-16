@@ -144,8 +144,12 @@ ADD ./Wallpaper-yaybench_1280x720.png /opt/images/Wallpaper.png
 ADD ./yaymark_57x57.png /opt/icons/yaybench.png
 ADD ./xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 ADD ./xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+# Update SERIAL_NUMBER to force rebuild of all layers (don't use cached layers)
+ARG SERIAL_NUMBER
+ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180616.1350}
 
-
+CMD /usr/local/scripts/start.sh
+CMD /usr/local/scripts/update_drivers.sh
 
 RUN echo 'export PATH=/usr/local/cuda/bin:/usr/local/anaconda3/envs/tensorflow/bin:$PATH' >> /home/nimbix/.bashrc \
 &&  echo 'export PYTHONPATH=/usr/local/anaconda3/envs/tensorflow/lib/python3.6:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/prettytensor-0.7.2-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/enum34-1.1.6-py3.6.egg:/usr/local/anaconda3/envs/tensorflow/lib/python3.6/site-packages/matplotlib:$PYTHONPATH' >> /home/nimbix/.bashrc \
@@ -155,8 +159,7 @@ RUN echo 'export PATH=/usr/local/cuda/bin:/usr/local/anaconda3/envs/tensorflow/b
 &&  echo 'export PATH=$PATH:/usr/local/AOCC-1.2-Compiler/bin' >> /etc/skel/.bashrc \
 &&  echo 'source /usr/local/setenv_AOCC.sh' >> /etc/skel/.bashrc 
 
-CMD /usr/local/scripts/start.sh
-CMD /usr/local/scripts/update_drivers.sh
+
    
 
 # Expose port 22 for local JARVICE emulation in docker
