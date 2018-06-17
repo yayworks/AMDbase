@@ -146,7 +146,7 @@ ADD ./xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4
 ADD ./xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 # Update SERIAL_NUMBER to force rebuild of all layers (don't use cached layers)
 ARG SERIAL_NUMBER
-ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180616.1350}
+ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180616.1944}
 
 CMD /usr/local/scripts/start.sh
 CMD /usr/local/scripts/update_drivers.sh
