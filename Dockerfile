@@ -5,7 +5,7 @@ LABEL maintainer="Nimbix, Inc."
 
 # Update SERIAL_NUMBER to force rebuild of all layers (don't use cached layers)
 ARG SERIAL_NUMBER
-ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180618.2000}
+ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180704.1722}
 
 ARG GIT_BRANCH
 ENV GIT_BRANCH ${GIT_BRANCH:-master}
@@ -107,6 +107,10 @@ RUN sudo apt-get update && \
     
 RUN sudo /usr/local/anaconda3/bin/pip install jupyter_c_kernel && \
     sudo /usr/local/anaconda3/bin/install_c_kernel
+    
+RUN echo " " | sudo apt-add-repository ppa:webupd8team/atom && \
+    sudo apt-get update && \
+    sudo apt-get install -y atom
 
 
 RUN mkdir -p /opt/images && \
@@ -146,7 +150,7 @@ ADD ./xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4
 ADD ./xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 # Update SERIAL_NUMBER to force rebuild of all layers (don't use cached layers)
 ARG SERIAL_NUMBER
-ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180618.2000}
+ENV SERIAL_NUMBER ${SERIAL_NUMBER:-20180704.1722}
 
 CMD /usr/local/scripts/start.sh
 CMD /usr/local/scripts/update_drivers.sh
